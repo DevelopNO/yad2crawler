@@ -44,27 +44,35 @@ export function ListingCard({ listing, onUpdate }: ListingCardProps) {
 
     return (
         <div className={clsx("bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow", loading && "opacity-70 pointer-events-none")}>
-            <div className="relative h-48 bg-gray-200">
-                {listing.coverImage ? (
-                    <img src={listing.coverImage} alt="Property" className="w-full h-full object-cover" />
-                ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400">No Image</div>
-                )}
-                <div className="absolute top-2 right-2 flex gap-2">
+            <div className="relative h-48 bg-gray-200 group">
+                <a href={`https://www.yad2.co.il/item/${listing.id}`} target="_blank" rel="noopener noreferrer" className="block w-full h-full">
+                    {listing.coverImage ? (
+                        <img src={listing.coverImage} alt="Property" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                    ) : (
+                        <div className="flex items-center justify-center h-full text-gray-400">No Image</div>
+                    )}
+                </a>
+                <div className="absolute top-2 right-2 flex gap-2 z-10">
                     <button
-                        onClick={toggleFavorite}
-                        className={clsx("p-2 rounded-full shadow-sm transition-colors", listing.isFavorite ? "bg-red-50 text-red-500" : "bg-white text-gray-400 hover:text-red-500")}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            toggleFavorite();
+                        }}
+                        className={clsx("p-1.5 rounded-full shadow-sm transition-colors cursor-pointer", listing.isFavorite ? "bg-red-50 text-red-500" : "bg-white/90 text-gray-400 hover:text-red-500")}
                     >
-                        <Heart className={clsx("w-5 h-5", listing.isFavorite && "fill-current")} />
+                        <Heart className={clsx("w-4 h-4", listing.isFavorite && "fill-current")} />
                     </button>
                     <button
-                        onClick={hideListing}
-                        className="p-2 rounded-full bg-white text-gray-400 shadow-sm hover:text-gray-700 transition-colors"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            hideListing();
+                        }}
+                        className="p-1.5 rounded-full bg-white/90 text-gray-400 shadow-sm hover:text-gray-700 transition-colors cursor-pointer"
                     >
-                        <EyeOff className="w-5 h-5" />
+                        <EyeOff className="w-4 h-4" />
                     </button>
                 </div>
-                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded pointer-events-none">
                     {new Date(listing.firstSeenAt).toLocaleDateString()}
                 </div>
             </div>
@@ -72,7 +80,9 @@ export function ListingCard({ listing, onUpdate }: ListingCardProps) {
             <div className="p-4 space-y-3">
                 <div>
                     <div className="flex justify-between items-start">
-                        <h3 className="text-xl font-bold text-gray-900">{price}</h3>
+                        <a href={`https://www.yad2.co.il/item/${listing.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                            <h3 className="text-xl font-bold text-gray-900">{price}</h3>
+                        </a>
                         {listing.yad2Id && (
                             <a href={`https://www.yad2.co.il/item/${listing.id}`} target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:text-orange-600">
                                 <ExternalLink className="w-4 h-4" />

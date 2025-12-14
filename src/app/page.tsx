@@ -30,6 +30,7 @@ export default function Home() {
 
       const data = await ky.get('/api/listings', { searchParams }).json<Listing[]>();
       setListings(data);
+      return data;
     } catch (e) {
       console.error(e);
     } finally {
@@ -38,7 +39,12 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetchListings();
+    fetchListings().then((data) => {
+      // If we have no listings on load, try to trigger a sync automatically
+      if (data && data.length === 0) {
+        triggerCron();
+      }
+    });
   }, [showHidden, favoritesOnly, minPrice, maxPrice, minRooms]);
 
   const handleUpdate = (id: string, updates: Partial<Listing>) => {
@@ -57,6 +63,14 @@ export default function Home() {
     try {
       await ky.get('/api/cron');
       await fetchListings();
+    } catch (error: any) {
+      try {
+        // Try to parse the error message from the response
+        const errorData = await error.response?.json();
+        alert(`Update Failed: ${errorData?.error || error.message}`);
+      } catch (e) {
+        alert(`Update Failed: ${error.message}`);
+      }
     } finally {
       setRefreshing(false);
     }
