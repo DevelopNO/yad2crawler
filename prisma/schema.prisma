@@ -1,0 +1,48 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Listing {
+  id             String   @id // Yad2 Token
+  yad2Id         Int      // OrderId
+  city           String?
+  neighborhood   String?
+  area           String?  // "area" object text
+  street         String?
+  houseNumber    Int?
+  floor          Int?
+  price          Int?
+  rooms          Float? // Sometimes rooms can be 3.5
+  squareMeters   Int?
+  propertyType   String?
+  coverImage     String?
+  images         String   // JSON string of array
+  lat            Float?
+  lon            Float?
+  
+  // App State
+  isFavorite     Boolean  @default(false)
+  isHidden       Boolean  @default(false)
+  
+  firstSeenAt    DateTime @default(now())
+  lastSeenAt     DateTime @default(now()) // Updated on each fetch if still present
+  updatedAt      DateTime @updatedAt
+  
+  // Raw Data (in case we want to re-parse or debug)
+  rawData        String?  // JSON string
+}
+
+model SyncLog {
+  id        Int      @id @default(autoincrement())
+  startedAt DateTime @default(now())
+  status    String   // SUCCESS, FAILURE
+  message   String?
+  itemsCount Int?
+}
